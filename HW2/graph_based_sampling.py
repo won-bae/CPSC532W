@@ -65,7 +65,7 @@ def sample_from_joint(graph):
 
 def get_stream(graph):
     """Return a stream of prior samples
-    Args: 
+    Args:
         graph: json graph as loaded by daphne wrapper
     Returns: a python iterator with an infinite stream of samples
         """
@@ -78,10 +78,11 @@ def get_stream(graph):
 #Testing:
 
 def run_deterministic_tests():
-    
+
     for i in range(1,13):
         #note: this path should be with respect to the daphne path!
-        graph = daphne(['graph','-i','../programs/tests/deterministic/test_{}.daphne'.format(i)])
+        #graph = daphne(['graph','-i','../programs/tests/deterministic/test_{}.daphne'.format(i)])
+        graph = daphne(['graph/deterministic/test_{}.json'.format(i)])
         print("{}th test ast: {}".format(i, graph))
         truth = load_truth('programs/tests/deterministic/test_{}.truth'.format(i))
         ret = deterministic_eval(graph[-1])
@@ -89,39 +90,40 @@ def run_deterministic_tests():
             assert(is_tol(ret, truth))
         except AssertionError:
             raise AssertionError('return value {} is not equal to truth {} for graph {}'.format(ret,truth,graph))
-        
+
         print('Test passed')
-        
+
     print('All deterministic tests passed')
-    
+
 
 
 def run_probabilistic_tests():
-    
-    #TODO: 
+
+    #TODO:
     num_samples=1e4
     max_p_value = 1e-4
-    
+
     for i in range(1,7):
-        #note: this path should be with respect to the daphne path!        
-        graph = daphne(['graph', '-i', '../programs/tests/probabilistic/test_{}.daphne'.format(i)])
+        #note: this path should be with respect to the daphne path!
+        #graph = daphne(['graph', '-i', '../programs/tests/probabilistic/test_{}.daphne'.format(i)])
+        graph = daphne(['graph/probabilistic/test_{}.json'.format(i)])
         print("{}th test ast: {}".format(i, graph))
         truth = load_truth('programs/tests/probabilistic/test_{}.truth'.format(i))
-        
+
         stream = get_stream(graph)
-        
+
         p_val = run_prob_test(stream, truth, num_samples)
-        
+
         print('p value', p_val)
         assert(p_val > max_p_value)
-    
-    print('All probabilistic tests passed')    
+
+    print('All probabilistic tests passed')
 
 
-        
-        
+
+
 if __name__ == '__main__':
-    
+
 
     # run_deterministic_tests()
     # run_probabilistic_tests()
@@ -130,18 +132,19 @@ if __name__ == '__main__':
 
     for i in range(1,5):
         results = []
-        for _ in range(num_samples): 
-            graph = daphne(['graph','-i','../programs/{}.daphne'.format(i)])
+        for _ in range(num_samples):
+            #graph = daphne(['graph','-i','../programs/{}.daphne'.format(i)])
+            graph = daphne(['graph/{}.json'.format(i)])
             # print('\n\n\nSample of prior of program {}:'.format(i))
             # print("{}th test ast: {}".format(i, graph))
-            result = sample_from_joint(graph)  
+            result = sample_from_joint(graph)
             results.append(result)
 
         if (i+1) % 100 == 0:
             print('{}/{}'.format(i+1, num_samples))
 
-        import IPython; IPython.embed()
+        #import IPython; IPython.embed()
         results = torch.stack(results)
         print(results.shape)
 
-    
+
