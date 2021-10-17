@@ -82,7 +82,7 @@ def run_deterministic_tests():
     for i in range(1,14):
         #note: this path should be with respect to the daphne path!
         #ast = daphne(['desugar', '-i', '../programs/tests/deterministic/test_{}.daphne'.format(i)])
-        ast = json.load('json/deterministic/test_{}.json'.format(i))
+        ast = json.load(open('json/deterministic/test_{}.json'.format(i), 'r'))
         print("{}th test ast: {}".format(i, ast))
         truth = load_truth('programs/tests/deterministic/test_{}.truth'.format(i))
         ret, sig = evaluate_program(ast)
@@ -104,7 +104,8 @@ def run_probabilistic_tests():
 
     for i in range(1,7):
         #note: this path should be with respect to the daphne path!
-        ast = daphne(['desugar', '-i', '../programs/tests/probabilistic/test_{}.daphne'.format(i)])
+        #ast = daphne(['desugar', '-i', '../programs/tests/probabilistic/test_{}.daphne'.format(i)])
+        ast = json.load(open('json/probabilistic/test_{}.json'.format(i), 'r'))
         print("{}th test ast: {}".format(i, ast))
         truth = load_truth('programs/tests/probabilistic/test_{}.truth'.format(i))
 
@@ -127,7 +128,7 @@ if __name__ == '__main__':
 
     for i in range(1,5):
         #ast = daphne(['desugar', '-i', '../programs/{}.daphne'.format(i)])
-        ast = json.load('json/{}.json'.format(i))
+        ast = json.load(open('json/{}.json'.format(i), 'r'))
         print('\n\n\nSample of prior of program {}:'.format(i))
         print("{}th test ast: {}".format(i, ast))
         result = evaluate_program(ast)

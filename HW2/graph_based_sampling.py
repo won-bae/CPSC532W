@@ -1,5 +1,6 @@
 import torch
 import torch.distributions as dist
+import json
 
 from daphne import daphne
 
@@ -82,7 +83,7 @@ def run_deterministic_tests():
     for i in range(1,13):
         #note: this path should be with respect to the daphne path!
         #graph = daphne(['graph','-i','../programs/tests/deterministic/test_{}.daphne'.format(i)])
-        graph = daphne(['graph/deterministic/test_{}.json'.format(i)])
+        graph = json.load(open('graph/deterministic/test_{}.json'.format(i), 'r'))
         print("{}th test ast: {}".format(i, graph))
         truth = load_truth('programs/tests/deterministic/test_{}.truth'.format(i))
         ret = deterministic_eval(graph[-1])
@@ -106,7 +107,7 @@ def run_probabilistic_tests():
     for i in range(1,7):
         #note: this path should be with respect to the daphne path!
         #graph = daphne(['graph', '-i', '../programs/tests/probabilistic/test_{}.daphne'.format(i)])
-        graph = daphne(['graph/probabilistic/test_{}.json'.format(i)])
+        graph = json.load(open('graph/probabilistic/test_{}.json'.format(i), 'r'))
         print("{}th test ast: {}".format(i, graph))
         truth = load_truth('programs/tests/probabilistic/test_{}.truth'.format(i))
 
@@ -134,7 +135,7 @@ if __name__ == '__main__':
         results = []
         for _ in range(num_samples):
             #graph = daphne(['graph','-i','../programs/{}.daphne'.format(i)])
-            graph = daphne(['graph/{}.json'.format(i)])
+            graph = json.load(open('graph/{}.json'.format(i), 'r'))
             # print('\n\n\nSample of prior of program {}:'.format(i))
             # print("{}th test ast: {}".format(i, graph))
             result = sample_from_joint(graph)
