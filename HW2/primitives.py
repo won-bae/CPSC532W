@@ -26,7 +26,7 @@ class Primitives(object):
 			"uniform": uniform,
 			"discrete": discrete,
 			"sample*": lambda x: x.sample().item(),
-			"observe*": lambda x: [],
+			"observe*": lambda x: x[2],
 			"mat-transpose": mat_transpose,
 			"mat-mul": mat_mul,
 			"mat-tanh": mat_tanh,
@@ -72,7 +72,7 @@ def vector(*x):
 				dim = dim and (prev.shape[0] == xi.shape[0])
 			vectorized.append(xi)
 		else:
-			vectorized.append(xi)			
+			vectorized.append(xi)
 	try:
 		vectorized = torch.cat(vectorized, dim=int(dim)).float()
 	except:
@@ -112,7 +112,7 @@ def normal(*x):
 	mu, sigma = x[0], x[1]
 	sampler = dist.normal.Normal(mu, sigma)
 	return sampler
-	 
+
 def beta(*x):
 	alpha, gamma = x[0], x[1]
 	sampler = dist.beta.Beta(alpha, gamma)

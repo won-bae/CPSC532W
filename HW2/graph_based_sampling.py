@@ -1,7 +1,7 @@
 import torch
 import torch.distributions as dist
 import json
-
+import numpy as np
 from daphne import daphne
 
 # from primitives import funcPrimitives #TODO
@@ -40,10 +40,7 @@ def _deterministic_eval(exp, graph):
     elif type(exp) is list:
         op = exp[0]
         args = exp[1:]
-        # try:
         result = env[op](*map(_deterministic_eval, args, [graph] * len(args)))
-        # except:
-            # import IPython; IPython.embed()
         return result
     elif type(exp) is int or type(exp) is float:
         # We use torch for all numerical objects in our evaluator
@@ -126,26 +123,35 @@ def run_probabilistic_tests():
 if __name__ == '__main__':
 
 
-    # run_deterministic_tests()
-    # run_probabilistic_tests()
+    run_deterministic_tests()
+    run_probabilistic_tests()
 
     num_samples = 1000
 
+    means = []
+    stds = []
+    samples = []
     for i in range(1,5):
         results = []
-        for _ in range(num_samples):
-            #graph = daphne(['graph','-i','../programs/{}.daphne'.format(i)])
+        for j in range(num_samples):
             graph = json.load(open('graph/{}.json'.format(i), 'r'))
-            # print('\n\n\nSample of prior of program {}:'.format(i))
-            # print("{}th test ast: {}".format(i, graph))
             result = sample_from_joint(graph)
             results.append(result)
 
-        if (i+1) % 100 == 0:
-            print('{}/{}'.format(i+1, num_samples))
+            if (j+1) % 100 == 0:
+                print('{}/{}'.format(j+1, num_samples))
 
-        #import IPython; IPython.embed()
-        results = torch.stack(results)
-        print(results.shape)
+        try:
+            results = torch.tensor(results).numpy()
+        except:
+            results = torch.stack(results).numpy()
+
+        means.append(np.mean(results, axis=0))
+        stds.append(np.std(results, axis=0))
+        np.save('results/graph/samples{}.npy'.format(i), results)
+        print(means)
+
+    np.save('results/graph/means.npy', means)
+    np.save('results/graph/stds.npy', stds)
 
 
